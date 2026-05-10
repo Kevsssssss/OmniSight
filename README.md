@@ -1,6 +1,15 @@
 # OmniSight
 
-OmniSight is a professional grade LAN based parental monitoring and control system. It consists of a high performance Admin Dashboard and a stealthy Client Service designed for Windows environments.
+OmniSight is a professional grade LAN based monitoring and control system. While designed for parental oversight, it is an ideal solution for Internet Cafe owners in the Philippines to manage and monitor customer activities. 
+
+The system provides a comprehensive oversight of client machines to ensure customers are not performing malicious actions, accessing prohibited content, or tampering with system settings.
+
+## Key Commercial Advantages
+
+*   Zero Hardware Setup: Operates entirely through your existing local area network. No additional cables, splitters, or hardware monitors are required.
+*   Stealth Operation: The client runs as a background system service, making it invisible to standard users.
+*   Centralized Control: Monitor all cafe terminals from a single admin PC or your mobile phone while walking around the premises.
+*   Security: Password protected dashboard and uninstaller to prevent unauthorized access by customers.
 
 ## Core Features
 
@@ -78,4 +87,4 @@ To monitor from your phone, ensure it is on the same Wi-Fi network and navigate 
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under a Proprietary Commercial License. See the LICENSE file for details.
