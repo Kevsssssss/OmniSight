@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OmniSight.Client/OmniSight.Client.csproj" />
+    <Project Path="src/OmniSight.Common/OmniSight.Common.csproj" />
+    <Project Path="src/OmniSight.Dashboard/OmniSight.Dashboard.csproj" />
+  </Folder>
+</Solution>
