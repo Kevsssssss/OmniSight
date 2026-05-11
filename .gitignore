@@ -33,3 +33,13 @@ global_settings.json
 appsettings.json
 resume-gemini-chat.txt
 RELEASE_DESCRIPTION.txt
+
+# Dashboard UI Build Artifacts (Reproduced by build.ps1)
+src/OmniSight.Dashboard/wwwroot/_next/
+src/OmniSight.Dashboard/wwwroot/__next*
+src/OmniSight.Dashboard/wwwroot/*.html
+src/OmniSight.Dashboard/wwwroot/*.js
+src/OmniSight.Dashboard/wwwroot/*.json
+src/OmniSight.Dashboard/wwwroot/index.txt
+src/OmniSight.Dashboard/wwwroot/404/
+src/OmniSight.Dashboard/wwwroot/_not-found/
