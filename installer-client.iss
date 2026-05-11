@@ -1,7 +1,7 @@
 ; OmniSight CLIENT Setup with Dynamic Uninstall Password
 
 #define MyAppName "OmniSight Client"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyClientExeName "OmniSight.Client.exe"
 
 [Setup]

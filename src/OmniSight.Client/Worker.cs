@@ -97,7 +97,7 @@ public class Worker : BackgroundService
                 }
             }
 
-            if (_connection.State == HubConnectionState.Connected && !_isSession0)
+            if (_connection.State == HubConnectionState.Connected && !_isSession0 && _settings.IsStreaming)
             {
                 try
                 {

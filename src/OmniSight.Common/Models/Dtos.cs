@@ -19,6 +19,7 @@ public class ClientSettingsDto
 {
     public int TargetFps { get; set; } = 5;
     public int JpegQuality { get; set; } = 30;
+    public bool IsStreaming { get; set; } = true;
 }
 
 public class ClientInfo

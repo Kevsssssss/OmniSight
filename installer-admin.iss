@@ -1,7 +1,7 @@
 ; OmniSight ADMIN (Dashboard) Setup
 
 #define MyAppName "OmniSight Admin"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "OmniSight Project"
 #define MyAppExeName "OmniSight.Dashboard.exe"
 
@@ -21,6 +21,7 @@ PrivilegesRequired=admin
 
 [Files]
 Source: "src\OmniSight.Dashboard\bin\Release\net10.0-windows\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "docs\manual\OmniSight_Manual.pdf"; DestDir: "{app}"; Flags: ignoreversion
 
 [Code]
 var
@@ -100,6 +101,7 @@ end;
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\Technical Manual"; Filename: "{app}\OmniSight_Manual.pdf"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 
 [Run]

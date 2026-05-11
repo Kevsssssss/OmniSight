@@ -34,6 +34,25 @@ export default function Home() {
   const [quality, setQuality] = useState(30);
   const [isMonitorOn, setIsMonitorOn] = useState(true);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
+  
+  // Refs to allow SignalR handlers to access current state without effect re-runs
+  const isMonitorOnRef = useRef(isMonitorOn);
+  const selectedClientIdRef = useRef(selectedClientId);
+  const fpsRef = useRef(fps);
+  const qualityRef = useRef(quality);
+
+  useEffect(() => {
+    isMonitorOnRef.current = isMonitorOn;
+  }, [isMonitorOn]);
+
+  useEffect(() => {
+    selectedClientIdRef.current = selectedClientId;
+  }, [selectedClientId]);
+
+  useEffect(() => {
+    fpsRef.current = fps;
+    qualityRef.current = quality;
+  }, [fps, quality]);
 
   useEffect(() => {
     const hubUrl = typeof window !== 'undefined' 
@@ -54,9 +73,7 @@ export default function Home() {
           framesReceived: 0 
         };
         
-        // If we receive data, this is the 'active' session (User vs Service)
-        // We update the clientId to ensure commands go to the session that can actually see the screen
-        const updatedClientId = frame.data ? frame.clientId : existing.clientId;
+        const updatedClientId = frame.data && frame.data.length > 0 ? frame.clientId : existing.clientId;
 
         return {
           ...prev,
@@ -64,19 +81,17 @@ export default function Home() {
             ...existing,
             clientId: updatedClientId,
             machineName: mName,
-            framesReceived: frame.data ? existing.framesReceived + 1 : existing.framesReceived,
+            framesReceived: frame.data && frame.data.length > 0 ? existing.framesReceived + 1 : existing.framesReceived,
             lastFrame: new Date(frame.timestamp).toLocaleTimeString()
           }
         };
       });
 
-      // Only process and render if monitor is ON and machine is selected
-      // Note: we now compare against machineName because that's our key
-      if (isMonitorOn && selectedClientId) {
-         // Find the client with this ID or machine name
-         const targetMachine = Object.values(clients).find(c => c.clientId === selectedClientId || c.machineName === selectedClientId);
-         if (targetMachine && targetMachine.clientId === frame.clientId) {
-            if (frame.data) setScreenSrc(`data:image/jpeg;base64,${frame.data}`);
+      if (isMonitorOnRef.current && selectedClientIdRef.current) {
+         if (frame.clientId === selectedClientIdRef.current || frame.machineName === selectedClientIdRef.current) {
+            if (frame.data && frame.data.length > 0) {
+              setScreenSrc(`data:image/jpeg;base64,${frame.data}`);
+            }
          }
       }
     });
@@ -91,7 +106,6 @@ export default function Home() {
         setStatus('Connected');
         connectionRef.current = connection;
         
-        // Auto-login if trusted
         const savedToken = localStorage.getItem('omnisight_token');
         if (savedToken) {
           try {
@@ -114,7 +128,55 @@ export default function Home() {
       });
 
     return () => { connection.stop(); };
-  }, [selectedClientId, isMonitorOn]);
+  }, []); // Only run once on mount
+
+  const toggleMonitor = async () => {
+    const newState = !isMonitorOn;
+    setIsMonitorOn(newState);
+    
+    if (selectedClientId && connectionRef.current) {
+      try {
+        await connectionRef.current.invoke('UpdateSettings', selectedClientId, {
+          targetFps: Number(fps),
+          jpegQuality: Number(quality),
+          isStreaming: newState
+        });
+      } catch (err) {
+        console.error('Failed to update streaming state:', err);
+      }
+    }
+  };
+
+  const selectClient = async (clientId: string) => {
+    if (selectedClientId === clientId) return;
+    
+    const prevId = selectedClientId;
+    setSelectedClientId(clientId);
+    setActiveTab('monitor');
+
+    if (connectionRef.current) {
+      try {
+        // 1. Turn OFF previous client
+        if (prevId) {
+          await connectionRef.current.invoke('UpdateSettings', prevId, {
+            targetFps: Number(fps),
+            jpegQuality: Number(quality),
+            isStreaming: false
+          });
+        }
+        // 2. Turn ON new client if monitor is globally "on"
+        if (isMonitorOn) {
+          await connectionRef.current.invoke('UpdateSettings', clientId, {
+            targetFps: Number(fps),
+            jpegQuality: Number(quality),
+            isStreaming: true
+          });
+        }
+      } catch (err) {
+        console.error('Failed to switch client streaming:', err);
+      }
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,8 +238,17 @@ export default function Home() {
     if (connectionRef.current) {
       await connectionRef.current.invoke('UpdateSettings', "all", {
         targetFps: Number(fps),
-        jpegQuality: Number(quality)
+        jpegQuality: Number(quality),
+        isStreaming: false // Globally disable streaming by default to optimize network
       });
+      // Then re-enable only for the selected client if needed
+      if (selectedClientId && isMonitorOn) {
+        await connectionRef.current.invoke('UpdateSettings', selectedClientId, {
+          targetFps: Number(fps),
+          jpegQuality: Number(quality),
+          isStreaming: true
+        });
+      }
     }
   };
 
@@ -307,7 +378,7 @@ export default function Home() {
                    {Object.values(clients).map(client => (
                      <button
                        key={client.machineName}
-                       onClick={() => { setSelectedClientId(client.clientId); setActiveTab('monitor'); }}
+                       onClick={() => selectClient(client.clientId)}
                        className={`w-full text-left p-5 rounded-3xl transition-all duration-300 ${
                          selectedClientId === client.clientId 
                          ? 'bg-white text-black shadow-2xl' 
@@ -352,7 +423,7 @@ export default function Home() {
                             </div>
 
                             <button 
-                              onClick={() => setIsMonitorOn(!isMonitorOn)}
+                              onClick={toggleMonitor}
                               className={`absolute top-8 right-8 p-3 rounded-2xl border transition-all shadow-2xl ${isMonitorOn ? 'bg-black/60 border-white/10 text-white hover:bg-red-600 hover:border-red-400' : 'bg-green-600 border-green-400 text-white animate-pulse'}`}
                               title={isMonitorOn ? "Turn Off Monitor" : "Turn On Monitor"}
                             >
@@ -377,7 +448,6 @@ export default function Home() {
                                <button onClick={() => sendCommand('Message')} className="bg-white text-black p-5 rounded-3xl text-[11px] font-black uppercase tracking-wider hover:bg-slate-200 transition-all active:scale-95 shadow-xl">Send Message</button>
                                <button onClick={() => sendCommand('Message', 'all')} className="bg-slate-800 text-white p-5 rounded-3xl text-[11px] font-black uppercase tracking-wider hover:bg-slate-700 transition-all active:scale-95 border border-white/5">Send to All Devices</button>
                             </div>
-                            <button onClick={() => sendCommand('CloseMessage')} className="w-full bg-slate-900/60 text-slate-500 p-4 rounded-3xl text-[10px] font-black uppercase tracking-widest border border-white/5 hover:bg-slate-800 hover:text-white transition-all">Close Broadcast Message</button>
                          </div>
 
                          <div className="bg-slate-900/40 p-10 rounded-[3rem] border border-white/5 flex justify-center gap-12 shadow-xl">
