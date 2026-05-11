@@ -285,11 +285,11 @@ export default function Home() {
       {isCheckingAuth ? (
         <div className="min-h-screen flex flex-col items-center justify-center space-y-6">
            <div className="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin"></div>
-           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.4em] animate-pulse">Restoring Session</p>
+           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.4em]">Restoring Session</p>
         </div>
       ) : !isLoggedIn ? (
         <div className="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950">
-          <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
+          <div className="w-full max-w-md">
             <div className="bg-slate-900/40 backdrop-blur-xl p-10 rounded-[3rem] border border-white/10 shadow-2xl space-y-8">
               <div className="text-center space-y-2">
                 <h1 className="text-3xl font-black tracking-tighter">OMNISIGHT</h1>
@@ -353,7 +353,7 @@ export default function Home() {
                   ) : (
                     <>
                       <FontAwesomeIcon icon={faShieldHalved} className="text-xs" />
-                      Authorize Session
+                      Login
                     </>
                   )}
                 </button>
