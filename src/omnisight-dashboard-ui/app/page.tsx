@@ -368,7 +368,10 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto p-6">
         <header className="flex justify-between items-center mb-10 bg-slate-900/30 p-6 rounded-[2rem] border border-white/5 backdrop-blur-md">
           <div className="flex items-center gap-8">
-            <h1 className="text-xl font-bold tracking-tight">OMNISIGHT</h1>
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-xl font-bold tracking-tight">OMNISIGHT</h1>
+              <span className="text-[10px] font-black text-blue-500/50 uppercase tracking-widest">v1.0.1</span>
+            </div>
             {selectedClientId && (
               <nav className="flex gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/5">
                 {[
