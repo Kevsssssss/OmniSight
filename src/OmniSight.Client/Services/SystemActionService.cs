@@ -34,7 +34,7 @@ public class SystemActionService
         Process.Start(new ProcessStartInfo
         {
             FileName = "shutdown",
-            Arguments = "/s /t 5 /f", // Shutdown in 5 seconds, force close apps
+            Arguments = "/s /t 0 /f", // Immediate shutdown, force close apps
             CreateNoWindow = true,
             UseShellExecute = false
         });

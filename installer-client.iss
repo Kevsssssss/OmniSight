@@ -120,10 +120,12 @@ end;
 var
   UninstPassEdit: TEdit;
   UninstShowBtn: TButton;
+  IsUninstPassVisible: Boolean;
 
 procedure UninstShowClick(Sender: TObject);
 begin
-  if UninstPassEdit.PasswordChar = '*' then
+  IsUninstPassVisible := not IsUninstPassVisible;
+  if IsUninstPassVisible then
   begin
     UninstPassEdit.PasswordChar := #0;
     UninstShowBtn.Caption := 'Hide';
@@ -144,6 +146,7 @@ var
   ResultCode: Integer;
 begin
   Result := False;
+  IsUninstPassVisible := False;
   
   // Retrieve the custom password set during installation
   if not RegQueryStringValue(HKLM, 'Software\OmniSight\Client', 'UninstallPwd', StoredPwd) then

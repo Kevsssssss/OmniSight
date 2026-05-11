@@ -56,7 +56,21 @@ public class Worker : BackgroundService
             switch (type)
             {
                 case "Lock": _actionService.LockPC(); break;
-                case "Shutdown": _actionService.ShutdownPC(); break;
+                case "Shutdown": 
+                    if (_isSession0)
+                    {
+                        // In session 0, just wait and then kill
+                        Task.Run(async () => {
+                            await Task.Delay(5000);
+                            _actionService.ShutdownPC();
+                        });
+                    }
+                    else
+                    {
+                        // In user session, show the beautiful red countdown
+                        _broadcastOverlay.ShowCountdown("System Administrator", 5, () => _actionService.ShutdownPC());
+                    }
+                    break;
                 case "Message": _broadcastOverlay.Show(payload); break;
                 case "CloseMessage": _broadcastOverlay.Close(); break;
             }

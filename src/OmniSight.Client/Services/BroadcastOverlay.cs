@@ -95,6 +95,104 @@ public class BroadcastOverlay
         if ((DateTime.Now - _shownAt).TotalSeconds >= 3) CloseInternal();
     }
 
+    public void ShowCountdown(string title, int seconds, Action onComplete)
+    {
+        CloseInternal();
+
+        Thread thread = new(() =>
+        {
+            lock (_lock)
+            {
+                _shownAt = DateTime.Now;
+                int remaining = seconds;
+
+                _activeForm = new Form
+                {
+                    FormBorderStyle = FormBorderStyle.None,
+                    TopMost = true,
+                    ShowInTaskbar = false,
+                    BackColor = Color.FromArgb(45, 0, 0), // Dark red for warning
+                    StartPosition = FormStartPosition.CenterScreen,
+                    Width = 450,
+                    Height = 220,
+                    Opacity = 0.98
+                };
+
+                _activeForm.Paint += (s, e) => {
+                    ControlPaint.DrawBorder(e.Graphics, _activeForm.ClientRectangle, Color.Red, ButtonBorderStyle.Solid);
+                };
+
+                Label titleLabel = new Label
+                {
+                    Text = title,
+                    ForeColor = Color.White,
+                    Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                    AutoSize = false,
+                    Width = _activeForm.Width - 40,
+                    Height = 40,
+                    Left = 20,
+                    Top = 40,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                Label countLabel = new Label
+                {
+                    Text = remaining.ToString(),
+                    ForeColor = Color.Red,
+                    Font = new Font("Segoe UI", 48, FontStyle.Bold),
+                    AutoSize = false,
+                    Width = _activeForm.Width,
+                    Height = 80,
+                    Left = 0,
+                    Top = 80,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                Label subLabel = new Label
+                {
+                    Text = "SYSTEM SHUTDOWN IMMINENT",
+                    ForeColor = Color.FromArgb(200, 200, 200),
+                    Font = new Font("Segoe UI", 8, FontStyle.Bold),
+                    AutoSize = false,
+                    Width = _activeForm.Width,
+                    Height = 20,
+                    Left = 0,
+                    Top = 170,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                _activeForm.Controls.Add(titleLabel);
+                _activeForm.Controls.Add(countLabel);
+                _activeForm.Controls.Add(subLabel);
+
+                System.Windows.Forms.Timer logicTimer = new System.Windows.Forms.Timer();
+                logicTimer.Interval = 1000; 
+                logicTimer.Tick += (s, e) => {
+                    remaining--;
+                    if (remaining <= 0)
+                    {
+                        logicTimer.Stop();
+                        onComplete?.Invoke();
+                        CloseInternal();
+                    }
+                    else
+                    {
+                        countLabel.Text = remaining.ToString();
+                        if (_activeForm != null) {
+                            _activeForm.TopMost = true;
+                            _activeForm.BringToFront();
+                        }
+                    }
+                };
+                logicTimer.Start();
+
+                Application.Run(_activeForm);
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+    }
+
     private void CloseInternal()
     {
         lock (_lock)
