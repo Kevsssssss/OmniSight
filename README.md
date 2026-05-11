@@ -44,29 +44,46 @@ OmniSight/
     └── Installer/          (Output directory for setup files)
 ```
 
-## Setup and Installation
+## Getting Started
 
-### Prerequisites
+### Installation (Ready-to-use)
 
+To get started with OmniSight immediately, follow these steps:
+
+1.  **Download the Installers:**
+    *   Navigate to the [Releases](https://github.com/REPLACE_WITH_YOUR_USER/REPLACE_WITH_YOUR_REPO/releases) page of this repository.
+    *   Download the latest `OmniSight-Admin-Setup.exe` and `OmniSight-Client-Setup.exe`.
+
+2.  **Admin Setup (Monitoring PC):**
+    *   Run `OmniSight-Admin-Setup.exe` on the computer you will use for monitoring.
+    *   Follow the wizard to set your **Administrator Username** and **Password**.
+    *   Launch the **OmniSight Admin** application and log in.
+
+3.  **Client Setup (Target PCs):**
+    *   Run `OmniSight-Client-Setup.exe` on each machine you wish to monitor.
+    *   **Dashboard IP:** Enter the IP address of the Admin PC (found in the Admin Dashboard header).
+    *   **Uninstall Password:** Set a secure password to prevent unauthorized removal of the software.
+    *   The client will immediately begin running in the background as a stealth system service.
+
+### Building from Source (Developers Only)
+
+If you wish to modify or build the project yourself:
+
+#### Prerequisites
 *   .NET 10 SDK or later
 *   Node.js (for UI development and building)
 *   Inno Setup (to generate installers)
 
-### Building the Project
-
+#### Building the Project
 1.  Open a terminal in the project root.
 2.  Run the build script:
     ```powershell
     .\build.ps1
     ```
-    This script compiles the .NET projects and builds the Next.js frontend into the dashboard static assets folder.
 
-### Generating Installers
-
-1.  Open Inno Setup Compiler.
-2.  Open and compile `installer-admin.iss` to create the Dashboard installer.
-3.  Open and compile `installer-client.iss` to create the Client installer.
-4.  The generated `.exe` files will be located in `bin/Installer/`.
+#### Generating Installers
+1.  Compile `installer-admin.iss` and `installer-client.iss` using Inno Setup Compiler.
+2.  The generated installers will be in `bin/Installer/`.
 
 ## Usage
 
