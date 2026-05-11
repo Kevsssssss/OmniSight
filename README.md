@@ -51,7 +51,7 @@ OmniSight/
 To get started with OmniSight immediately, follow these steps:
 
 1.  **Download the Installers:**
-    *   Navigate to the [Releases](https://github.com/REPLACE_WITH_YOUR_USER/REPLACE_WITH_YOUR_REPO/releases) page of this repository.
+    *   Navigate to the [Releases](https://github.com/Kevsssssss/OmniSight/releases) page of this repository.
     *   Download the latest `OmniSight-Admin-Setup.exe` and `OmniSight-Client-Setup.exe`.
 
 2.  **Admin Setup (Monitoring PC):**
