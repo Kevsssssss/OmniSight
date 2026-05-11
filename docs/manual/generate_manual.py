@@ -63,7 +63,7 @@ def create_manual():
     pdf.cell(0, 10, 'TECHNICAL OPERATIONAL MANUAL', 0, 1, 'C')
     pdf.set_font('helvetica', '', 8)
     pdf.set_text_color(100, 116, 139)
-    pdf.cell(0, 5, 'VERSION 1.0.0 | MAY 2026', 0, 1, 'C')
+    pdf.cell(0, 5, 'VERSION 1.0.1 | MAY 2026', 0, 1, 'C')
 
     # --- Introduction ---
     pdf.add_page()

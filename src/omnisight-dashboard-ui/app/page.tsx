@@ -2,6 +2,21 @@
 
 import { useEffect, useState, useRef } from 'react';
 import * as signalR from '@microsoft/signalr';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faDesktop, 
+  faPlug, 
+  faBolt, 
+  faMoon, 
+  faLock, 
+  faPowerOff, 
+  faShieldHalved,
+  faPaperPlane,
+  faCircleNodes,
+  faGear,
+  faUserShield,
+  faBroadcastTower
+} from '@fortawesome/free-solid-svg-icons';
 
 interface ClientInfo {
   clientId: string;
@@ -335,7 +350,12 @@ export default function Home() {
                       <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
                       Authenticating...
                     </>
-                  ) : 'Authorize Session'}
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faShieldHalved} className="text-xs" />
+                      Authorize Session
+                    </>
+                  )}
                 </button>
               </form>
             </div>
@@ -351,13 +371,18 @@ export default function Home() {
             <h1 className="text-xl font-bold tracking-tight">OMNISIGHT</h1>
             {selectedClientId && (
               <nav className="flex gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/5">
-                {['monitor', 'broadcast', 'settings'].map(tab => (
+                {[
+                  { id: 'monitor', label: 'monitor', icon: faDesktop },
+                  { id: 'broadcast', label: 'broadcast', icon: faBroadcastTower },
+                  { id: 'settings', label: 'settings', icon: faGear }
+                ].map(tab => (
                   <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-6 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all ${activeTab === tab ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`px-6 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${activeTab === tab.id ? 'bg-white text-black shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                   >
-                    {tab}
+                    <FontAwesomeIcon icon={tab.icon} className="text-[10px]" />
+                    {tab.label}
                   </button>
                 ))}
               </nav>
@@ -396,7 +421,7 @@ export default function Home() {
           <div className="col-span-12 lg:col-span-9">
              {!selectedClientId ? (
                 <div className="h-[600px] bg-slate-900/10 border-2 border-dashed border-white/5 rounded-[4rem] flex flex-col items-center justify-center opacity-30">
-                   <div className="text-4xl mb-4">🖥️</div>
+                   <FontAwesomeIcon icon={faDesktop} className="text-5xl mb-6" />
                    <p className="text-[11px] font-bold uppercase tracking-[0.3em]">Select a device to monitor</p>
                 </div>
              ) : (
@@ -409,7 +434,7 @@ export default function Home() {
                             ) : (
                                <div className="text-center space-y-6">
                                   <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto border-2 ${isMonitorOn ? 'border-white/10' : 'border-red-500/20 bg-red-500/5'}`}>
-                                    {isMonitorOn ? <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin"></div> : <span className="text-2xl opacity-40">🌙</span>}
+                                    {isMonitorOn ? <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin"></div> : <FontAwesomeIcon icon={faMoon} className="text-xl opacity-40" />}
                                   </div>
                                   <p className="text-slate-600 text-[10px] font-bold uppercase tracking-[0.4em]">{isMonitorOn ? 'Receiving Active Feed' : 'Monitor Standby Mode'}</p>
                                </div>
@@ -417,17 +442,18 @@ export default function Home() {
                             
                             {/* Overlay Controls */}
                             <div className="absolute top-8 left-8 flex gap-3">
-                               <span className={`text-[10px] font-black px-4 py-2 rounded-2xl shadow-2xl transition-colors ${isMonitorOn ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-500'}`}>
+                               <span className={`text-[10px] font-black px-4 py-2 rounded-2xl shadow-2xl transition-colors flex items-center gap-2 ${isMonitorOn ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-500'}`}>
+                                 <div className={`w-1.5 h-1.5 rounded-full ${isMonitorOn ? 'bg-white animate-pulse' : 'bg-slate-600'}`}></div>
                                  {isMonitorOn ? 'LIVE FEED' : 'OFFLINE'}
                                </span>
                             </div>
 
                             <button 
                               onClick={toggleMonitor}
-                              className={`absolute top-8 right-8 p-3 rounded-2xl border transition-all shadow-2xl ${isMonitorOn ? 'bg-black/60 border-white/10 text-white hover:bg-red-600 hover:border-red-400' : 'bg-green-600 border-green-400 text-white animate-pulse'}`}
+                              className={`absolute top-8 right-8 w-12 h-12 flex items-center justify-center rounded-2xl border transition-all shadow-2xl ${isMonitorOn ? 'bg-black/60 border-white/10 text-white hover:bg-red-600 hover:border-red-400' : 'bg-green-600 border-green-400 text-white animate-pulse'}`}
                               title={isMonitorOn ? "Turn Off Monitor" : "Turn On Monitor"}
                             >
-                               {isMonitorOn ? '🔌' : '⚡'}
+                               <FontAwesomeIcon icon={isMonitorOn ? faPlug : faBolt} />
                             </button>
                          </div>
                       </div>
@@ -445,14 +471,22 @@ export default function Home() {
                                />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                               <button onClick={() => sendCommand('Message')} className="bg-white text-black p-5 rounded-3xl text-[11px] font-black uppercase tracking-wider hover:bg-slate-200 transition-all active:scale-95 shadow-xl">Send Message</button>
-                               <button onClick={() => sendCommand('Message', 'all')} className="bg-slate-800 text-white p-5 rounded-3xl text-[11px] font-black uppercase tracking-wider hover:bg-slate-700 transition-all active:scale-95 border border-white/5">Send to All Devices</button>
+                               <button onClick={() => sendCommand('Message')} className="bg-white text-black p-5 rounded-3xl text-[11px] font-black uppercase tracking-wider hover:bg-slate-200 transition-all active:scale-95 shadow-xl flex items-center justify-center gap-3">
+                                  <FontAwesomeIcon icon={faPaperPlane} className="text-[10px]" />
+                                  Send Message
+                               </button>
+                               <button onClick={() => sendCommand('Message', 'all')} className="bg-slate-800 text-white p-5 rounded-3xl text-[11px] font-black uppercase tracking-wider hover:bg-slate-700 transition-all active:scale-95 border border-white/5 flex items-center justify-center gap-3">
+                                  <FontAwesomeIcon icon={faCircleNodes} className="text-[10px]" />
+                                  Send to All
+                               </button>
                             </div>
                          </div>
 
                          <div className="bg-slate-900/40 p-10 rounded-[3rem] border border-white/5 flex justify-center gap-12 shadow-xl">
                             <button onClick={() => sendCommand('Lock')} className="flex items-center gap-5 group">
-                               <div className="w-16 h-16 bg-slate-800 rounded-[1.5rem] flex items-center justify-center text-2xl group-hover:bg-blue-600 transition-all border border-white/5">🔒</div>
+                               <div className="w-16 h-16 bg-slate-800 rounded-[1.5rem] flex items-center justify-center text-xl group-hover:bg-blue-600 transition-all border border-white/5">
+                                  <FontAwesomeIcon icon={faLock} />
+                               </div>
                                <div className="text-left">
                                   <div className="text-xs font-black uppercase tracking-widest">Lock Computer</div>
                                   <div className="text-[9px] text-slate-500 font-bold mt-1 uppercase">Instant Lock</div>
@@ -460,7 +494,9 @@ export default function Home() {
                             </button>
                             <div className="w-px bg-white/5 h-16"></div>
                             <button onClick={() => sendCommand('Shutdown')} className="flex items-center gap-5 group">
-                               <div className="w-16 h-16 bg-red-950/20 rounded-[1.5rem] flex items-center justify-center text-2xl group-hover:bg-red-600 transition-all border border-red-900/20">🛑</div>
+                               <div className="w-16 h-16 bg-red-950/20 rounded-[1.5rem] flex items-center justify-center text-xl group-hover:bg-red-600 transition-all border border-red-900/20">
+                                  <FontAwesomeIcon icon={faPowerOff} className="text-red-500 group-hover:text-white" />
+                               </div>
                                <div className="text-left">
                                   <div className="text-xs font-black uppercase tracking-widest text-red-500">Shutdown Computer</div>
                                   <div className="text-[9px] text-slate-700 font-bold mt-1 uppercase">Emergency Power</div>
@@ -525,7 +561,10 @@ export default function Home() {
                               </div>
                             )}
 
-                            <button onClick={handleUpdateCredentials} className="w-full bg-slate-800 text-white p-6 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-700 transition-all active:scale-95 border border-white/5">Update Credentials</button>
+                            <button onClick={handleUpdateCredentials} className="w-full bg-slate-800 text-white p-6 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:bg-slate-700 transition-all active:scale-95 border border-white/5 flex items-center justify-center gap-3">
+                               <FontAwesomeIcon icon={faUserShield} className="text-[10px]" />
+                               Update Credentials
+                            </button>
                          </div>
                       </div>
                    )}

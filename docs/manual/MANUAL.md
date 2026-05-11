@@ -1,5 +1,5 @@
 # OmniSight Technical Manual
-**Version 1.0.0 | May 2026**
+**Version 1.0.1 | May 2026**
 
 ## 1. Project Overview
 OmniSight is a professional-grade LAN-based monitoring and control system. It is designed for parental oversight and commercial environments such as Internet Cafes. The system provides real-time visibility and administrative command capabilities over local network machines.
